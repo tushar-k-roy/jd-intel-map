@@ -1,10 +1,10 @@
 # JD JSON Schema
 
 Each line in `data/processed/jd_master.jsonl` should be one JSON object.
-
-Required keys:
+## Required keys
 
 - entry_id
+- date_posted
 - date_added
 - company
 - role_title_raw
@@ -28,8 +28,25 @@ Required keys:
 - similarity_tags
 - notes
 
-Rules:
-- Always keep all keys
-- Use null or "NOT_MENTIONED" for missing values
-- Multi-value fields should be arrays in JSON
-- If internal joining is needed later, use `;`
+## Field rules
+
+- `entry_id`
+  - Must be numeric-only, stored as a string (e.g. `"1"`, `"2"`, `"3"`).
+  - Acts as the primary key for each JD record.
+
+- `date_posted`
+  - Date when the job was posted on LinkedIn/company site.
+  - Format: `YYYY-MM-DD` if known.
+  - Use `"NOT_MENTIONED"` if the exact posting date cannot be determined.
+
+- `date_added`
+  - Date when you copied/logged this JD into your personal dataset.
+  - Format: `YYYY-MM-DD`.
+
+## General rules
+
+- Always keep **all** keys in every record.
+- For missing/unknown values, use `null` or `"NOT_MENTIONED"` (but do not drop the key).
+- Multi-value fields (`skills_*`, `required_skills`, `preferred_skills`, `similarity_tags`) **must be arrays** of strings in JSON.
+- If you need internal grouping inside a string, use `;` as the separator (e.g. `"SQL;joins;aggregations"`).
+- Downstream exports (e.g. CSV) may join array values using `" | "` or other separators, but the source JSONL should keep them as arrays.
